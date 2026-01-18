@@ -1,7 +1,9 @@
 # 🛡️ Flay — Discord Server Policing Bot
 
 **Flay** is an automated moderation bot designed to enforce server rules without requiring constant human intervention. It is currently tailored for **“The Elites” Discord server**, where it enforces a **media-only rule** in a designated memes channel.
-You can add this bot using : https://discord.com/oauth2/authorize?client_id=1462140031433969744&permissions=8&integration_type=0&scope=bot
+
+- 🤖You can add this bot using : https://discord.com/oauth2/authorize?client_id=1462140031433969744&permissions=8&integration_type=0&scope=bot
+
 ---
 
 ## 🚀 What Flay Does
@@ -9,11 +11,13 @@ You can add this bot using : https://discord.com/oauth2/authorize?client_id=1462
 Flay monitors a specific Discord channel and ensures that every message follows the server’s media rule.
 
 ### ✅ A message is allowed if it:
+
 - Contains an image, video, or GIF attachment **or**
 - Is posted inside a thread **or**
 - Already has a thread attached to it
 
 ### ❌ If a message violates the rule (no media & no thread), Flay will:
+
 1. **Delete the message**
 2. **Timeout the user** (default: 1 minute)
 3. **Send a warning via DM**
@@ -37,10 +41,13 @@ Flay monitors a specific Discord channel and ensures that every message follows 
 You can modify these values in the code:
 
 ### Change the monitored channel:
+
 ```python
 MONITORED_CHANNEL_ID = 123456789  # Replace with your channel ID
 ```
+
 ### Change the Timeout Duration:
+
 ```python
 TIMEOUT_DURATION = timedelta(minutes=1)
 ```
