@@ -39,6 +39,8 @@ You can modify these values in the code:
 ### Change the monitored channel:
 ```python
 MONITORED_CHANNEL_ID = 123456789  # Replace with your channel ID
-
+```
 ### Change the Timeout Duration:
+```python
 TIMEOUT_DURATION = timedelta(minutes=1)
+```
