@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 
 # Configuration
-MONITORED_CHANNEL_IDs = [1464534259753685147,1464534335154552997,]  # Replace with your channel ID(s)
+MONITORED_CHANNEL_IDs = [1361226165695676501,1394177541668864101]  # Replace with your channel ID(s)
 TIMEOUT_DURATION = timedelta(minutes=1)  # Adjust timeout duration as needed
 
 
@@ -81,6 +81,13 @@ async def on_message(message):
 
         except discord.Forbidden as e:
             print(f"✗ Missing permissions to timeout {user}")
+            issue_report = (
+                    f'✗ Issue Report: Message from administrator {user} was deleted in {message.channel.mention},'
+                    f'for not containing media or not being in a thread.'
+                    )
+            await user.send(issue_report)
+            print(f"✗ User {user} is an administrator; sending issue report...")
+            print("------------------------------------------------RC3-")
         except Exception as e:
             print(f"✗ Error: {e}")
 
