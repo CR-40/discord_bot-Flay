@@ -107,19 +107,7 @@ async def message_has_thread(message):
  
     print(f"✓ Thread check completed - Has thread: {has_thread}")       
     return has_thread
-    print(f"→ Sending warning message...")
-    try:
-        await user.send(warning_text)
-        print(f"✓ Warning sent to {user} via DM")
-    except discord.Forbidden:
-        print(f"✗ Could not DM {user} (Forbidden). Falling back to channel message.")
-        try:
-            await message.channel.send(f"{user.mention} {warning_text}")
-            print(f"✓ Warning message sent in channel")
-        except Exception as e:
-            print(f"✗ Error sending fallback warning: {e}")
-    except Exception as e:
-        print(f"✗ Error sending warning: {e}")
+   
 
 ### Generate warning text based on context
 async def generate_warning_text(message, ctx):
