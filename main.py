@@ -15,7 +15,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 
 # Configuration
-MONITORED_CHANNEL_IDs = [1464534259753685147,1464534335154552997]  # Replace with your channel ID(s)
+MONITORED_CHANNEL_IDs = [1464534259753685147,1464534335154552997,]  # Replace with your channel ID(s)
 TIMEOUT_DURATION = timedelta(minutes=1)  # Adjust timeout duration as needed
 
 
@@ -25,12 +25,18 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
+    print("-------------------------------------------------init-")
 
-    if message.author.bot:
+    if not message.guild:
         return
 
-    if  message.channel.id not in MONITORED_CHANNEL_IDs:
+    if message.author.bot:
+        print("------------------------------------------------RC1-")
+        return
+
+    if message.channel.id not in MONITORED_CHANNEL_IDs:
         print(f"Message not in monitored channel (Channel ID: {message.channel.id})")
+        print("------------------------------------------------RC2-")
         return
     print(f"✓ Message received in monitored channel from {message.author}")
 
@@ -56,7 +62,13 @@ async def on_message(message):
             print(f"✓ Message deleted successfully")
 
             if message.guild and message.author.guild_permissions.administrator:
-                print(f"✗ User {user} is an administrator; skipping timeout.")
+                issue_report = (
+                    f'✗ Issue Report: Message from administrator {user} was deleted in {message.channel.mention},'
+                    f'for not containing media or not being in a thread.'
+                    )
+                await user.send(issue_report)
+                print(f"✗ User {user} is an administrator; sending issue report...")
+                print("------------------------------------------------RC3-")
                 return
             
             # Timeout the member
@@ -64,12 +76,16 @@ async def on_message(message):
             await user.timeout(TIMEOUT_DURATION, reason="Posted message without media in media-only channel")
             print(f"✓ User timed out for {TIMEOUT_DURATION.total_seconds() / 60:.0f} minutes")
 
+            await user.send(warning_text)
+            print(f"✓ Warning message sent to {user}")
+
         except discord.Forbidden as e:
             print(f"✗ Missing permissions to timeout {user}")
         except Exception as e:
             print(f"✗ Error: {e}")
+
     print(f"✓ message processing completed")
-    print("--------------------------------------------------")
+    print("-------------------------------------------------cc-")
 
 
 
