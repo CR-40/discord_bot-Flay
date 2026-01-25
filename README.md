@@ -2,8 +2,6 @@
 
 **Flay** is an automated moderation bot designed to enforce server rules without requiring constant human intervention. It is currently tailored for **“The Elites” Discord server**, where it enforces a **media-only rule** in a designated memes channel.
 
-- 🤖You can add this bot using : https://discord.com/oauth2/authorize?client_id=1462140031433969744&permissions=8&integration_type=0&scope=bot
-
 ---
 
 ## 🚀 What Flay Does
