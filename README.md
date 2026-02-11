@@ -49,3 +49,20 @@ MONITORED_CHANNEL_ID = 123456789  # Replace with your channel ID
 ```python
 TIMEOUT_DURATION = timedelta(minutes=1)
 ```
+
+---
+
+## 🧩 Guild Admin Interface (Per-Guild Controls)
+
+Flay now supports per-guild configuration through admin commands.
+
+### Admin commands
+
+- `!guild_config` → Shows current guild settings
+- `!add_monitored #channel` → Adds a channel to monitored list
+- `!remove_monitored #channel` → Removes a monitored channel
+- `!set_timeout <minutes>` → Sets timeout duration for that guild (1-60)
+- `!set_log_channel #channel` → Sets a guild log channel for moderation/config events
+- `!show_logs [limit]` → Shows recent in-memory log events for that guild (max 20)
+
+All commands require Administrator permission.
