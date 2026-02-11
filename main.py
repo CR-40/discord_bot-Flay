@@ -4,6 +4,17 @@ import logging
 from dotenv import load_dotenv
 import os
 from datetime import timedelta
+import check
+import json
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('bot.log'),  # Saves to file
+        logging.StreamHandler()          # Also prints to console
+    ]
+)
 
 
 # Create bot instance with necessary intents
@@ -15,36 +26,46 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 
 # Configuration
-MONITORED_CHANNEL_IDs = [1361226165695676501,1394177541668864101]  # Replace with your channel ID(s)
+def load_monitored_channels():
+    try:
+        with open('data.json', 'r') as f:
+            data = json.load(f)
+        ids = []
+        for guild in data:
+            ids.extend(guild.get("monitored_channel_ids", []))
+        return ids
+    except Exception as e:
+        logging.error(f"Error loading monitored channels: {e}") 
+        return []
+
+MONITORED_CHANNEL_IDs = load_monitored_channels()
 TIMEOUT_DURATION = timedelta(minutes=1)  # Adjust timeout duration as needed
 
 
 @bot.event
 async def on_ready():
-    print(f'{bot.user} is now running!')
+    logging.info(f'{bot.user} is now running!')
 
 @bot.event
 async def on_message(message):
-    print("-------------------------------------------------init-")
-
     if not message.guild:
+        logging.info("Ignoring non-guild message (Channel ID: {message.channel.id})")
         return
 
     if message.author.bot:
-        print("------------------------------------------------RC1-")
+        logging.info("Ignoring bot message(Channel ID: {message.channel.id} , Author: {message.author})")
         return
 
     if message.channel.id not in MONITORED_CHANNEL_IDs:
-        print(f"Message not in monitored channel (Channel ID: {message.channel.id})")
-        print("------------------------------------------------RC2-")
+        logging.info(f"Ignoring message from non-monitored channel (Channel ID: {message.channel.id})")
         return
     print(f"✓ Message received in monitored channel from {message.author}")
 
     # Check if message is in a thread
-    has_thread = await message_has_thread(message)
+    has_thread = await check.message_has_thread(message)
    
     # Check if message has any attachments with images or videos
-    has_media = await message_has_media(message)
+    has_media = await check.message_has_media(message)
 
     # Penalties sequence----->>>>
     # If no media, delete message and timeout user
@@ -93,44 +114,6 @@ async def on_message(message):
 
     print(f"✓ message processing completed")
     print("-------------------------------------------------cc-")
-
-
-
-### Helper functions ###
-### Check if message has media attachments
-async def message_has_media(message):
-    has_media = False
-    media_extensions = ('.mp4', '.mov', '.webm', '.mkv', '.avi', '.flv', '.wmv', '.gif')
-   
-    for attachment in message.attachments:
-        if attachment.content_type:
-            if attachment.content_type.startswith('image/') or attachment.content_type.startswith('video/'):
-                has_media = True
-
-        if attachment.filename and attachment.filename.lower().endswith(media_extensions):
-            has_media = True
-        
-    print(f"✓ Media check completed - Has media: {has_media}")
-    return has_media
-
-### Check if message is in a thread or has an associated thread
-async def message_has_thread(message):
-    has_thread = False
-    if isinstance(message.channel, discord.Thread):
-        has_thread = True
-        print(f"✓ Thread check completed - Message is inside a thread")
-        return True
-    
-    try:
-        fetched_message = await message.channel.fetch_message(message.id)
-        if fetched_message.thread is not None:
-            has_thread = True
-    except Exception as e:
-        print(f"✗ Error checking thread status: {e}")
- 
-    print(f"✓ Thread check completed - Has thread: {has_thread}")       
-    return has_thread
-   
 
 ### Generate warning text based on context
 async def generate_warning_text(message, ctx):
