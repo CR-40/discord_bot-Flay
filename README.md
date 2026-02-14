@@ -104,6 +104,17 @@ python main.py
 
 ---
 
-## 📝 Logging
+## 🧩 Guild Admin Interface (Per-Guild Controls)
 
-Flay uses centralized logging (console + `bot.log`) and additionally supports per-guild event logs via `!show_logs` and optional forwarding with `!set_log_channel`.
+Flay now supports per-guild configuration through admin commands.
+
+### Admin commands
+
+- `!guild_config` → Shows current guild settings
+- `!add_monitored #channel` → Adds a channel to monitored list
+- `!remove_monitored #channel` → Removes a monitored channel
+- `!set_timeout <minutes>` → Sets timeout duration for that guild (1-60)
+- `!set_log_channel #channel` → Sets a guild log channel for moderation/config events
+- `!show_logs [limit]` → Shows recent in-memory log events for that guild (max 20)
+
+All commands require Administrator permission.
