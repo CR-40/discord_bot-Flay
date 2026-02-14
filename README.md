@@ -1,51 +1,109 @@
 # 🛡️ Flay — Discord Server Policing Bot
 
-**Flay** is an automated moderation bot designed to enforce server rules without requiring constant human intervention. It is currently tailored for **“The Elites” Discord server**, where it enforces a **media-only rule** in a designated memes channel.
+**Flay** is an automated Discord moderation bot that enforces a **media-only rule** in configured channels.
+It supports **per-guild settings** so each server can manage its own monitored channels, timeout duration, and moderation log channel.
 
 ---
 
 ## 🚀 What Flay Does
 
-Flay monitors a specific Discord channel and ensures that every message follows the server’s media rule.
+In monitored channels, a message is allowed if it:
 
-### ✅ A message is allowed if it:
+- Contains image/video/GIF media attachment, **or**
+- Is posted inside a thread, **or**
+- Has an associated thread.
 
-- Contains an image, video, or GIF attachment **or**
-- Is posted inside a thread **or**
-- Already has a thread attached to it
+If a message violates the rule, Flay will:
 
-### ❌ If a message violates the rule (no media & no thread), Flay will:
-
-1. **Delete the message**
-2. **Timeout the user** (default: 1 minute)
-3. **Send a warning via DM**
-   - If the user has DMs disabled, the warning is posted in the channel instead
+1. Delete the message
+2. Timeout the user (guild-configurable)
+3. Send a DM warning to the user
 
 ---
 
-## 🧠 How It Works (High Level)
+## ⚙️ Requirements
 
-1. The bot listens to all messages in the server.
-2. If the message is not in the monitored channel, it is ignored.
-3. If the message is in the monitored channel:
-   - It checks for media attachments.
-   - It checks whether the message is in a thread or has a thread attached.
-4. If both checks fail, moderation actions are applied automatically.
+- Python 3.10+
+- Dependencies from `requirements.txt`
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
-## ⚙️ Configuration
+## 🔐 Environment Variables
 
-You can modify these values in the code:
+Create a `.env` file:
 
-### Change the monitored channel:
-
-```python
-MONITORED_CHANNEL_ID = 123456789  # Replace with your channel ID
+```env
+DISCORD_TOKEN=your_bot_token_here
 ```
 
-### Change the Timeout Duration:
+---
 
-```python
-TIMEOUT_DURATION = timedelta(minutes=1)
+## 🗂️ Data Configuration (`data.json`)
+
+Flay stores per-guild configuration in `data.json`.
+
+Example:
+
+```json
+[
+  {
+    "guild_name": "The Elites",
+    "guild_id": 1361226165695676498,
+    "monitored_channel_ids": [1361226165695676501],
+    "timeout_minutes": 1,
+    "log_channel_id": 1361226165695676502
+  }
+]
 ```
+
+### Fields
+
+- `guild_name`: Human-readable guild name
+- `guild_id`: Discord guild ID
+- `monitored_channel_ids`: List of channels where media-only rule is enforced
+- `timeout_minutes` *(optional, default: 1)*: Timeout duration for violations
+- `log_channel_id` *(optional)*: Channel where moderation/config events are posted
+
+---
+
+## 🧩 Guild Admin Commands
+
+All commands below require **Administrator** permissions.
+
+- `!guild_config`  
+  Show current guild configuration.
+
+- `!add_monitored #channel`  
+  Add a channel to monitored channels for this guild.
+
+- `!remove_monitored #channel`  
+  Remove a channel from monitored channels for this guild.
+
+- `!set_timeout <minutes>`  
+  Set timeout duration (1 to 60 minutes).
+
+- `!set_log_channel #channel`  
+  Set the guild channel that receives moderation/config event logs.
+
+- `!show_logs [limit]`  
+  Show recent in-memory guild log entries (up to 20).
+
+---
+
+## ▶️ Run
+
+```bash
+python main.py
+```
+
+---
+
+## 📝 Logging
+
+Flay uses centralized logging (console + `bot.log`) and additionally supports per-guild event logs via `!show_logs` and optional forwarding with `!set_log_channel`.
